@@ -120,7 +120,7 @@
                 <executions>
                     <execution>
                         <id>npm-install</id>
-                        <phase>compile</phase>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
@@ -140,19 +140,19 @@
                 <executions>
                     <execution>
                         <id>copy-resources</id>
-                        <phase>prepare-package</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>src/main/resources/static</outputDirectory>
+                            <outputDirectory>src/main/resources</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/webapp/dist</directory>
-<!--                                    <targetPath>${basedir}/target/site</targetPath>-->
+                                    <targetPath>static</targetPath>
 <!--                                    <filtering>true</filtering>-->
 <!--                                    <includes>-->
-<!--                                        <include>doclet-config.xml</include>-->
+<!--                                        <include>some.file.to.include</include>-->
 <!--                                    </includes>-->
                                 </resource>
                             </resources>

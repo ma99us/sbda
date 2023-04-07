@@ -1,6 +1,32 @@
-<script setup lang="ts">
+<script lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import {mapState, mapStores} from "pinia";
+import {useTextsStore} from "@/stores/texts";
+
+export default {
+  data() {
+    return {
+      isLoading: false
+    }
+  },
+  components: {
+    RouterLink,
+    RouterView,
+    HelloWorld
+  },
+  computed: {
+    ...mapStores(useTextsStore),
+    ...mapState(useTextsStore, ['hello'])
+  },
+  mounted() {
+    this.isLoading = true;
+    this.textsStore.loadHello()
+        .finally(() => {
+          this.isLoading = false;
+        });
+  }
+}
 </script>
 
 <template>
@@ -8,7 +34,7 @@ import HelloWorld from './components/HelloWorld.vue'
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+      <HelloWorld :msg="hello" />
 
       <nav>
         <RouterLink to="/">Home</RouterLink>

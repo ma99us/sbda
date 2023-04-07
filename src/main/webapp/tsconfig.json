@@ -5,7 +5,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "lib": ["dom", "es2018", "es2018.promise"]
   },
 
   "references": [
