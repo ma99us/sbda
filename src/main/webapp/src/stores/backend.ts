@@ -50,11 +50,12 @@ export const useBackendStore = defineStore('backend', {
       this.statusText = await this.loadString('status') || 'n/a';
     },
 
-    async pinWrite(action: PinAction) {
+    async pinAction(path:string, action: PinAction) {
       try {
         this.isBusy = true;
-        await api.post(BASE_URL + 'pin-write', action);
+        const response = await api.post(BASE_URL + path, action);
         await this.loadGpioAll();
+        return response.data == null ? '' : response.data;
       } catch (error) {
         console.error(error)
       } finally {
@@ -62,16 +63,16 @@ export const useBackendStore = defineStore('backend', {
       }
     },
 
+    async pinRead(action: PinAction) {
+      return await this.pinAction('pin-read', action);
+    },
+
+    async pinWrite(action: PinAction) {
+      return await this.pinAction('pin-write', action);
+    },
+
     async pinMode(action: PinAction) {
-      try {
-        this.isBusy = true;
-        await api.post(BASE_URL + 'pin-mode', action);
-        await this.loadGpioAll();
-      } catch (error) {
-        console.error(error)
-      } finally {
-        this.isBusy = false;
-      }
+      return await this.pinAction('pin-mode', action);
     },
   }
 })

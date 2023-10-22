@@ -31,4 +31,9 @@ public class BackendController {
     public void onPinWrite(@RequestBody PinAction dto) {
         opiService.gpioPinWrite(dto.getWPi(), dto.getIsHigh());
     }
+
+    @PostMapping("/pin-read")
+    public String onPinRead(@RequestBody PinAction dto) {
+        return opiService.gpioPinRead(dto.getWPi());
+    }
 }
