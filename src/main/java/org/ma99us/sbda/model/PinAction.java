@@ -10,4 +10,5 @@ public class PinAction {
     private Integer wPi;
     private Boolean isHigh;
     private String mode;
+    private Long durationMs;
 }

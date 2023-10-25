@@ -23,18 +23,21 @@ export default {
     async onPinRead(pin: number) {
       const action = {} as PinAction;
       action.wPi = pin;
+      action.readAll = true;
       this.pinStatus = await this.backendStore.pinRead(action);
     },
     onPinWrite(pin: number, isHigh: boolean) {
       const action = {} as PinAction;
       action.wPi = pin;
       action.isHigh = isHigh;
+      action.readAll = true;
       this.backendStore.pinWrite(action);
     },
     onPinMode(pin: number, mode: string = 'out') {
       const action = {} as PinAction;
       action.wPi = pin;
       action.mode = mode;
+      action.readAll = true;
       this.backendStore.pinMode(action);
     }
   }
@@ -58,7 +61,7 @@ export default {
 <style>
 .bad-status {
   color: coral;
-  font-weight: bold;
+  font-size: small;
 }
 
 code {

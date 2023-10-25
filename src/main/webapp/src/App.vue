@@ -11,10 +11,11 @@ export default {
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="42" height="42"/>
+    <img alt="Vue logo" class="logo" src="@/assets/orangepi-logo.png" height="42"/>
     <div class="wrapper">
       <nav>
-        <RouterLink to="/">Orange Pi Dashboard</RouterLink>
+        <RouterLink to="/">Dashboard</RouterLink>
+        <RouterLink to="/camera">Camera</RouterLink>
 <!--        <RouterLink to="/about">About</RouterLink>-->
       </nav>
     </div>
@@ -36,7 +37,7 @@ header .wrapper {
 }
 
 .logo {
-  margin: 0 2rem 0 0;
+  margin: 0 1rem 0 0;
 }
 
 nav {
@@ -45,8 +46,15 @@ nav {
   text-align: center;
 }
 
-nav a.router-link-exact-active {
+nav a {
   color: var(--color-text);
+  padding: 1rem 0.5rem 1rem 0.5rem;
+}
+
+nav a.router-link-exact-active {
+  text-decoration: none;
+  color: hsla(160, 100%, 37%, 1);
+  transition: 0.4s;
 }
 
 nav a.router-link-exact-active:hover {

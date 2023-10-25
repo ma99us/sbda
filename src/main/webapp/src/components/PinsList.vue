@@ -12,7 +12,7 @@ export default {
     ...mapState(useBackendStore, ['pins', 'isBusy'])
   },
   mounted() {
-    this.backendStore.loadPins();
+    this.backendStore.getPins();
   }
 }
 </script>

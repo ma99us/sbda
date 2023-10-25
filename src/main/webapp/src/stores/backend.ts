@@ -1,7 +1,6 @@
 import {defineStore} from 'pinia'
 import {api, BASE_URL} from "@/stores/api";
-import type {GpioPin} from "@/model/gpio-pin";
-import type {PinAction} from "@/model/gpio-pin";
+import type {GpioPin, PinAction} from "@/model/gpio-pin";
 
 export const useBackendStore = defineStore('backend', {
   state: () => {
@@ -16,7 +15,8 @@ export const useBackendStore = defineStore('backend', {
     isBadStatus: (state) => state.statusText != '' && state.statusText != 'Ready.' && state.statusText != 'Ok.',
   },
   actions: {
-    async loadPins() {
+    //FIXME: not used for now
+    async getPins() {
       try {
         this.isBusy = true;
         const response = await api.get<GpioPin[]>(BASE_URL + 'gpio-pins');
@@ -29,11 +29,11 @@ export const useBackendStore = defineStore('backend', {
       }
     },
 
-    async loadString(prompt: String): Promise<string> {
+    async getString(prompt: String): Promise<string> {
       try {
         this.isBusy = true;
         const response = await api.get<string>(BASE_URL + prompt);
-        return response.data || '';
+        return response.data == null ? '' : response.data;
       } catch (error) {
         console.error(error)
         return '';
@@ -43,18 +43,20 @@ export const useBackendStore = defineStore('backend', {
     },
 
     async loadGpioAll() {
-      this.gpioAll = await this.loadString('gpio-all') || 'n/a';
+      this.gpioAll = await this.getString('gpio-all') || 'n/a';
     },
 
     async loadStatusText() {
-      this.statusText = await this.loadString('status') || 'n/a';
+      this.statusText = await this.getString('status') || 'n/a';
     },
 
-    async pinAction(path:string, action: PinAction) {
+    async postAction(path:string, action: PinAction | null = null) {
       try {
         this.isBusy = true;
         const response = await api.post(BASE_URL + path, action);
-        await this.loadGpioAll();
+        if (action?.readAll) {
+          await this.loadGpioAll();
+        }
         return response.data == null ? '' : response.data;
       } catch (error) {
         console.error(error)
@@ -64,15 +66,27 @@ export const useBackendStore = defineStore('backend', {
     },
 
     async pinRead(action: PinAction) {
-      return await this.pinAction('pin-read', action);
+      return await this.postAction('pin-read', action);
     },
 
     async pinWrite(action: PinAction) {
-      return await this.pinAction('pin-write', action);
+      return await this.postAction('pin-write', action);
     },
 
     async pinMode(action: PinAction) {
-      return await this.pinAction('pin-mode', action);
+      return await this.postAction('pin-mode', action);
+    },
+
+    async pinBlink(action: PinAction) {
+      return await this.postAction('pin-blink', action);
+    },
+
+    async startCamera() {
+      return await this.postAction('start-camera-stream');
+    },
+
+    async stopCamera() {
+      return await this.postAction('stop-camera-stream');
     },
   }
 })

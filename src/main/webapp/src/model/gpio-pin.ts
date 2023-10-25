@@ -12,4 +12,7 @@ export class PinAction {
   wPi?:  number;
   isHigh?: boolean;
   mode?: string;
+  durationMs?: number;
+
+  readAll: boolean = false;
 }
