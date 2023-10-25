@@ -1,7 +1,7 @@
 <script lang="ts">
 import {useBackendStore} from "@/stores/backend";
 import {mapState, mapStores} from "pinia";
-import type {PinAction} from "@/model/gpio-pin";
+import type {PinAction} from "@/model/dtos";
 
 export default {
   data() {

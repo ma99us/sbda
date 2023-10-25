@@ -39,3 +39,5 @@ build/
 
 .idea
 /src/main/resources/static/**
+/*.log
+/Debug/

@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 
 /**
@@ -147,6 +146,10 @@ public class OrangePiService {
                 mjpgFuture = null;
             }
         }
+    }
+
+    public void goToSleep(int minutes) {
+        runCommand("sudo rtcwake -m mem -s " + (60 * minutes));
     }
 
     private static String dumpText(String text) {

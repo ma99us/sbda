@@ -1,12 +1,13 @@
 import {defineStore} from 'pinia'
 import {api, BASE_URL} from "@/stores/api";
-import type {GpioPin, PinAction} from "@/model/gpio-pin";
+import type {GpioPin, PinAction, TimeAction} from "@/model/dtos";
 
 export const useBackendStore = defineStore('backend', {
   state: () => {
     return {
       isBusy: false,
       statusText: '',
+      isBackendUp: true,
       gpioAll: '',
       pins: [] as GpioPin[]
     }
@@ -29,28 +30,30 @@ export const useBackendStore = defineStore('backend', {
       }
     },
 
-    async getString(prompt: String): Promise<string> {
+    async getString(prompt: String, timeout: number = 0): Promise<string> {
       try {
         this.isBusy = true;
-        const response = await api.get<string>(BASE_URL + prompt);
+        const response = await api.get<string>(BASE_URL + prompt, {timeout});
         return response.data == null ? '' : response.data;
       } catch (error) {
         console.error(error)
-        return '';
+        return 'n/a';
       } finally {
         this.isBusy = false;
       }
     },
 
     async loadGpioAll() {
-      this.gpioAll = await this.getString('gpio-all') || 'n/a';
+      this.gpioAll = await this.getString('gpio-all');
     },
 
-    async loadStatusText() {
-      this.statusText = await this.getString('status') || 'n/a';
+    async loadStatusText(timeout: number = 0) {
+      this.statusText = await this.getString('status', timeout);
+      this.isBackendUp = this.statusText != 'n/a';
+      return this.isBackendUp;
     },
 
-    async postAction(path:string, action: PinAction | null = null) {
+    async postAction(path:string, action: any | null = null) {
       try {
         this.isBusy = true;
         const response = await api.post(BASE_URL + path, action);
@@ -87,6 +90,10 @@ export const useBackendStore = defineStore('backend', {
 
     async stopCamera() {
       return await this.postAction('stop-camera-stream');
+    },
+
+    async goToSleep(action: TimeAction) {
+      return await this.postAction('go-to-sleep', action);
     },
   }
 })

@@ -9,10 +9,16 @@ export class GpioPin {
 
 export class PinAction {
   gpio?: number;
-  wPi?:  number;
+  wPi?: number;
   isHigh?: boolean;
   mode?: string;
   durationMs?: number;
 
   readAll: boolean = false;
+}
+
+export class TimeAction {
+  hours?: number;
+  minutes?: number;
+  seconds?: number;
 }

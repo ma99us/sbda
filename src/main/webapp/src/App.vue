@@ -1,11 +1,36 @@
 <script lang="ts">
+import {ref} from 'vue'
 import {RouterLink, RouterView} from 'vue-router'
+import PromptModal from '@/components/PromptModal.vue'
+import {mapState, mapStores} from "pinia";
+import {useBackendStore} from "@/stores/backend";
 
 export default {
   components: {
     RouterLink,
     RouterView,
+    PromptModal
   },
+  data() {
+    return {
+      modalActive: ref(false),
+      pollInterval: 0
+    }
+  },
+  computed: {
+    ...mapStores(useBackendStore),
+    ...mapState(useBackendStore, ['statusText', 'isBackendUp', 'isBusy']),
+  },
+  mounted() {
+    this.pollInterval = setInterval(async () => await this.backendStore.loadStatusText(1000), 5000);
+  },
+  unmounted() {
+    if (this.pollInterval) {
+      clearInterval(this.pollInterval);
+    }
+  },
+  methods: {
+  }
 }
 </script>
 
@@ -16,11 +41,20 @@ export default {
       <nav>
         <RouterLink to="/">Dashboard</RouterLink>
         <RouterLink to="/camera">Camera</RouterLink>
-<!--        <RouterLink to="/about">About</RouterLink>-->
+        <!--        <RouterLink to="/about">About</RouterLink>-->
       </nav>
     </div>
   </header>
   <RouterView/>
+
+  <div id="event-modal-outer">
+    <PromptModal :modalActive="!isBackendUp">
+      <div class="modal-content">
+        <h1>Reconnecting...</h1>
+      </div>
+    </PromptModal>
+  </div>
+
 </template>
 
 <style scoped>
@@ -71,4 +105,9 @@ nav a:first-of-type {
   border: 0;
 }
 
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
 </style>
