@@ -22,15 +22,14 @@ export default {
     ...mapState(useBackendStore, ['statusText', 'isBackendUp', 'isBusy']),
   },
   mounted() {
-    this.pollInterval = setInterval(async () => await this.backendStore.loadStatusText(1000), 5000);
+    this.pollInterval = setInterval(async () => await this.backendStore.loadStatusText(5000), 10000);
   },
   unmounted() {
     if (this.pollInterval) {
       clearInterval(this.pollInterval);
     }
   },
-  methods: {
-  }
+  methods: {}
 }
 </script>
 
@@ -41,16 +40,20 @@ export default {
       <nav>
         <RouterLink to="/">Dashboard</RouterLink>
         <RouterLink to="/camera">Camera</RouterLink>
-        <!--        <RouterLink to="/about">About</RouterLink>-->
+        <span class="last-right">
+          <RouterLink to="/about">?</RouterLink>
+        </span>
       </nav>
     </div>
   </header>
   <RouterView/>
 
   <div id="event-modal-outer">
-    <PromptModal :modalActive="!isBackendUp">
+    <PromptModal :modalActive="!isBackendUp" :doTimer="true">
       <div class="modal-content">
-        <h1>Reconnecting...</h1>
+        <div>
+          <img style="display: inline-block" src="@/assets/orangepi-squashed.png" height="60" /><h2 style="display: inline-block">Waiting for device...</h2>
+        </div>
       </div>
     </PromptModal>
   </div>
@@ -66,6 +69,7 @@ header {
 
 header .wrapper {
   display: flex;
+  flex: 1;
   place-items: flex-start;
   flex-wrap: wrap;
 }
@@ -75,14 +79,15 @@ header .wrapper {
 }
 
 nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
+  display: flex;
+  flex: 1;
 }
 
 nav a {
   color: var(--color-text);
   padding: 1rem 0.5rem 1rem 0.5rem;
+  font-size: larger;
+  font-weight: bold;
 }
 
 nav a.router-link-exact-active {
@@ -98,11 +103,15 @@ nav a.router-link-exact-active:hover {
 nav a {
   text-align: left;
   margin-left: 1rem;
-  font-size: 1rem;
 }
 
 nav a:first-of-type {
   border: 0;
+}
+
+nav .last-right {
+  flex: 1;
+  text-align: right;
 }
 
 .modal-content {

@@ -14,21 +14,22 @@ import java.util.concurrent.Executors;
 
 
 /**
- * GPIO utility interface.
- * See http://wiringpi.com/the-gpio-utility/
+ * OrangePI linux OS tools and processes interface utility.
+ * See: <a href="http://wiringpi.com/the-gpio-utility/">gpio tool</a>,
+ * <a href="https://github.com/jacksonliam/mjpg-streamer">mjpg-streamer</a>
  */
 @Slf4j
 @Service
 public class OrangePiService {
 
     @Value("${gpio-path:/usr/local/bin/gpio}")
-    private String GPIO;
+    private String GPIO;        // GPIO linux tool location
 
     @Value("${gpio-out-pins:3,4,6}")
-    private String outPinsStr;
+    private String outPinsStr;  // Used GPIO Pins, to be set to OUT mode on startup
 
-    @Value("${mjpg-streamer-script:/home/orangepi/mjpg-streamer/mjpg-streamer-experimental/runme.sh}")
-    private String MJPG_STREAMER;
+    @Value("${mjpg-streamer-script:/home/orangepi/mjpg-streamer/mjpg-streamer-experimental/runmjpg.sh}")
+    private String MJPG_STREAMER;   // camera capture linux shell script location
 
     @Getter
     private String statusText = "";
@@ -46,7 +47,11 @@ public class OrangePiService {
         if (outPinsStr != null && !outPinsStr.isEmpty()) {
             String[] split = outPinsStr.split(",");
             for (String pin : split) {
-                gpioPinMode(Integer.parseInt(pin), "out");
+                try {
+                    gpioPinMode(Integer.parseInt(pin), "out");
+                } catch (RuntimeException ex) {
+                    // no-op
+                }
             }
         }
     }
@@ -110,7 +115,7 @@ public class OrangePiService {
             }
             return res;
         } catch (Exception ex) {
-            log.error("Command {} failed", command, ex);
+            log.error("Command \"{}\" failed - {}", command, ex.getMessage());
             throw new RuntimeException(ex);
         }
     }

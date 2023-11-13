@@ -24,7 +24,7 @@ public class App {
     private String serverAddress;
 
     @Value("${open-browser:false}")
-    private boolean openBrowser;
+    private boolean openBrowser;    // whether to open web browser on startup
 
     public static void main(String[] args) {
         OrangePiService service = SpringApplication.run(App.class, args).getBean(OrangePiService.class);

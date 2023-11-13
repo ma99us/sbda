@@ -13,6 +13,7 @@ export class PinAction {
   isHigh?: boolean;
   mode?: string;
   durationMs?: number;
+  forward?: boolean;
 
   readAll: boolean = false;
 }

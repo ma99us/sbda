@@ -38,6 +38,6 @@ build/
 .DS_Store
 
 .idea
-/src/main/resources/static/**
+/src/main/resources/static/**/*
 /*.log
 /Debug/

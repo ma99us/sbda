@@ -6,6 +6,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.concurrent.Callable;
 
+/**
+ * Asynchronous, cancellable, long-lasting system process executable/command
+ */
 @Slf4j
 public class FutureCommand implements Callable<String> {
     private final String command;

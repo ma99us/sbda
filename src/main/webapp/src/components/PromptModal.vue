@@ -1,17 +1,3 @@
-<template>
-  <Transition name="modal-animation">
-    <div v-show="modalActive" class="event-modal">
-      <Transition name="modal-animation-inner">
-        <div v-show="modalActive" class="event-modal-inner">
-          <!-- Modal Content  -->
-           <slot />
-          <p v-if="elapsedTxt">...since {{ elapsedTxt }}</p>
-        </div>
-      </Transition>
-    </div>
-  </Transition>
-</template>
-
 <script lang="ts">
 import moment, {type Duration, type Moment} from 'moment'
 
@@ -22,7 +8,7 @@ interface Moments {
 
 export default {
   name: "PromptModal",
-  props: ["modalActive"],
+  props: ["modalActive", "doTimer"],
   data() {
     return {
       moments: {} as Moments,
@@ -37,25 +23,39 @@ export default {
     }
   },
   computed: {
-    elapsedTxt(): string | undefined {
+    timerTxt(): string | undefined {
       // return this.moments.elapsed?.format('hh:mm:ss');
       // return this.moments.elapsed?.humanize();
-      return this.fromNow;
+      return this.doTimer ? this.fromNow : undefined;
     }
   },
   created() {
-    setInterval(() => this.updateElapsed(), 1000);
+    setInterval(() => this.updateTimer(), 5000);  // 1000
   },
   methods: {
-    updateElapsed() {
-      if (this.moments.shown) {
-        this.moments.elapsed = moment.duration(moment().diff(this.moments.shown));
+    updateTimer() {
+      if (this.moments.shown && this.doTimer) {
+        // this.moments.elapsed = moment.duration(moment().diff(this.moments.shown));
         this.fromNow = this.moments.shown.fromNow();
       }
     }
   }
 }
 </script>
+
+<template>
+  <Transition name="modal-animation">
+    <div v-show="modalActive" class="event-modal">
+      <Transition name="modal-animation-inner">
+        <div v-show="modalActive" class="event-modal-inner">
+          <!-- Modal Content  -->
+          <slot />
+          <h6 v-if="timerTxt">...since {{ timerTxt }}</h6>
+        </div>
+      </Transition>
+    </div>
+  </Transition>
+</template>
 
 <style scoped>
 .event-modal {
@@ -81,7 +81,7 @@ export default {
   padding: 64px 16px;
 }
 
-p {
+h6, h5, h4, h3, h2, h1, p {
   text-align: center;
 }
 </style>

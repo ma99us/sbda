@@ -84,6 +84,10 @@ export const useBackendStore = defineStore('backend', {
       return await this.postAction('pin-blink', action);
     },
 
+    async pinStep(action: PinAction) {
+      return await this.postAction('pin-step', action);
+    },
+
     async startCamera() {
       return await this.postAction('start-camera-stream');
     },

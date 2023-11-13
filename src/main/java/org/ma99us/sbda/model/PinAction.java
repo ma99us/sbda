@@ -11,4 +11,5 @@ public class PinAction {
     private Boolean isHigh;
     private String mode;
     private Long durationMs;
+    private Boolean forward;
 }

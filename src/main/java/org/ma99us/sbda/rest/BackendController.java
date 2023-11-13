@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class BackendController {
 
+    final long R_PRESS_MS = 100L;
+    final long R_DBL_PRESS_MS = 100L;
+    final long R_STOP_MS = 1400L;
+
     @Autowired
     private OrangePiService opiService;
 
@@ -42,14 +46,42 @@ public class BackendController {
 
     @PostMapping("/pin-blink")
     public void onPinBlink(@RequestBody PinAction dto) {
-        long dur = dto.getDurationMs() != null ? dto.getDurationMs() : 500;
-        opiService.gpioPinWrite(dto.getWPi(), true);
+        long sleep = dto.getDurationMs() != null ? dto.getDurationMs() : R_PRESS_MS;
+        log.debug("onPinBlink; sleep={}", sleep);
+        dto.setIsHigh(true);
+        onPinWrite(dto);
         try {
-            Thread.sleep(dur);
+            Thread.sleep(sleep);
         } catch (InterruptedException e) {
             // no-op
         }
-        opiService.gpioPinWrite(dto.getWPi(), false);
+        dto.setIsHigh(false);
+        onPinWrite(dto);
+    }
+
+    @PostMapping("/pin-step")
+    public void onPinStep(@RequestBody PinAction dto) {
+        long duration = dto.getDurationMs() != null ? dto.getDurationMs() : 1000;
+        log.debug("onPinStep; duration={}, forward={}", duration, dto.getForward());
+        if (dto.getForward()) {
+            dto.setDurationMs(R_PRESS_MS);
+            onPinBlink(dto);
+            try {
+                Thread.sleep(R_DBL_PRESS_MS);
+            } catch (InterruptedException e) {
+                // no-op
+            }
+        }
+        dto.setDurationMs(R_PRESS_MS);
+        onPinBlink(dto);
+        try {
+            Thread.sleep(duration);
+        } catch (InterruptedException e) {
+            // no-op
+        }
+        // now stop
+        dto.setDurationMs(R_STOP_MS);
+        onPinBlink(dto);
     }
 
     @PostMapping("/start-camera-stream")
